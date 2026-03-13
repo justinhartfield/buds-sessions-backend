@@ -58,8 +58,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
+  // Health check at root (no prefix)
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.get('/health', (_req: any, res: any) => res.json({ status: 'ok' }));
+
   const port = process.env.PORT || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`Buds Sessions API running on port ${port}`);
   console.log(`Swagger docs available at http://localhost:${port}/docs`);
 }
