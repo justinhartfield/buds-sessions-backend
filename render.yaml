@@ -1,0 +1,43 @@
+databases:
+  - name: buds-sessions-db
+    plan: free
+    databaseName: buds_sessions
+    user: buds
+
+services:
+  - type: web
+    name: buds-sessions-api
+    runtime: docker
+    plan: free
+    repo: https://github.com/justinhartfield/buds-sessions-backend
+    branch: main
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: buds-sessions-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: API_PREFIX
+        value: api/v1
+      - key: CORS_ORIGINS
+        value: https://buds-sessions.netlify.app,http://localhost:4321
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: "15m"
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: "7d"
+      - key: FOUNDING_HOST_CAP
+        value: "50"
+      - key: REDIS_HOST
+        value: ""
+      - key: REDIS_PORT
+        value: "6379"
+      - key: REDIS_PASSWORD
+        value: ""
